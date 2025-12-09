@@ -1,2 +1,1 @@
-"# University-Of-Sulaimani_Journey" 
-"# University-Of-Sulaimani_Journey" 
+My jouney of learning at unversity of sulaimani, The repo include all lectures and projects and assignments.
