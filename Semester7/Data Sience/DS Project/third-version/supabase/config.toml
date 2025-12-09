@@ -1,0 +1,4 @@
+project_id = "ixpobpaaqrcvhhfowmfr"
+
+[functions.parse-pcap]
+verify_jwt = false

@@ -1,0 +1,79 @@
+-- admin table
+CREATE TABLE admins(
+	admin_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_name VARCHAR(50) NOT NULL UNIQUE,
+    user_password VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- car table
+CREATE TABLE car(
+	car_id INT PRIMARY KEY AUTO_INCREMENT,
+    car_type VARCHAR(50),
+    car_color VARCHAR(50),
+    car_name VARCHAR(50),
+    car_state VARCHAR(50),
+    car_metric INT,
+    SellingPrice DECIMAL(10,2),
+    PurchasePrice DECIMAL(10,2),
+    SellingDateTime DATETIME,
+    PurchaseDateTime DATETIME,
+    chassis VARCHAR(17) UNIQUE NOT NULL
+);
+
+-- inventory table
+CREATE TABLE inventory(
+	inventory_id INT PRIMARY KEY AUTO_INCREMENT,
+    location VARCHAR(100),
+    car_id INT,
+    CONSTRAINT car_inTable_fk FOREIGN KEY(car_id) REFERENCES car(car_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- financial table
+CREATE TABLE financial(
+	record_id INT PRIMARY KEY AUTO_INCREMENT,
+    car_id INT,
+    profits DECIMAL(10,2),
+    CONSTRAINT car_finanTable_fk FOREIGN KEY(car_id) REFERENCES car(car_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- show informationo about each tables
+DESC admins;
+DESC car;
+DESC financial;
+DESC inventory;
+
+-- to show tables status
+-- يظهرلك معلومات شاملة عن حميع الجداول
+SHOW TABLE STATUS;
+
+
+SELECT * FROM admins;
+-- operations
+-- tabe admins
+INSERT INTO admins(user_name, user_password)
+	VALUES ("ibrahim", "123456789"),
+		   ("mustafa", "u324$#^^"),
+           ("azzez", "wev$@#@$%"),
+           ("kozhin", "11335577");
+-- table car
+SELECT * FROM car;
+INSERT INTO car(car_type, car_color, car_name, car_state, car_metric, SellingPrice,
+                PurchasePrice, SellingDateTime, PurchaseDateTime, chassis)
+	VALUES ("sedan", "white", "TOYOTA corola", "new", 0, 16800,13500, "2025-5-19 05:55:44", NOW(), "DSHTNMIDX128TD7B1"),
+		   ("suv", "black", "DODGE cahrger", "used", 15700, 24000,30000, "2025-5-19 05:55:44", NOW(), "RQOY73NV458DR7EUY"),
+           ("sedan", "gray", "CHEVROLET malebu", "used", 78459, 11000,15700, "2025-5-19 05:55:44",  NOW(), "REWSDF987QWEOIU87");
+-- table financial
+SELECT * FROM financial;
+INSERT INTO financial(car_id, profits)
+	VALUE (1, 50000),
+		  (2, 50000),
+          (3, 50000);
+-- table inventory
+SELECT * FROM inventory;
+INSERT INTO inventory(location)
+	VALUES ("Sulaimani"),
+		   ("Bahgdad"),
+           ("Erbil");
+DELETE FROM car 
+WHERE car_id = 1;

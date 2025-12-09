@@ -1,0 +1,39 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.head,
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  background-color: rgb(154, 43, 43);
+  color: white;
+}
+.main {
+  height: calc(100vh - 80px);
+  display: flex;
+  gap: 10px;
+  padding: 5px 0;
+}
+.sidebar {
+  background-color: rgb(154, 43, 43);
+  padding: 8px;
+  color: white;
+  width: 12%;
+}
+.sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 120px;
+  font-size: 18px;
+  padding: 15px;
+  gap: 10px;
+  flex: 1;
+}
+.sec {
+  background-color: rgb(41, 205, 234);
+  padding: 15px;
+}

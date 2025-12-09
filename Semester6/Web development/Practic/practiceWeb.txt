@@ -1,0 +1,45 @@
+python —version
+cd desktop
+mkdir project
+cd project
+python -m venv venv
+cd venv
+Set-ExecutionPolicy Unrestricted -scope process
+Scripts\activate
+pip install django
+django-admin startproject mysite
+cd mysite
+python manage.py startapp myapp
+python manage.py runserver ( to run )
+—————————————————
+la folder my app folderek drust akain ba nawy ( templates ) u fileki tya drust akain ba nawy ( home.html)
+wa harwaha filek la nawy folder myapp drust akain ba nawy ( urls.py )
+— codes:
+1. home.html:
+har codeky html ba saday bnusa
+
+2. myapp/urls.py:
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+]
+
+3. mysite/urls.py:
+from django.contrib import admin
+from django.urls import path,include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('myapp.urls')),
+]
+
+4. mysite/settings:
+la naw INSTALLED_APPS ama zyad dakain: 'myapp'
+
+5. myapp/views.py:
+from django.shortcuts import render,HttpResponse
+
+def home(request):
+    return render(request, 'home.html')

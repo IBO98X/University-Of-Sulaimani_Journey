@@ -1,0 +1,337 @@
+import javax.media.opengl.*;
+import javax.media.opengl.awt.*;
+
+import com.jogamp.opengl.util.Animator;
+
+import javax.media.opengl.glu.*;
+
+import javax.swing.*;
+
+import com.jogamp.opengl.util.gl2.GLUT;
+
+import java.awt.event.*;
+
+import javax.sound.sampled.*;
+
+import java.io.*;
+
+public class PongGame extends JFrame implements GLEventListener, KeyListener {
+
+    float ball_initial_speed = 0.4f;
+    float ball_size = 15.0f;
+    float max_speed = 1.5f;
+    float speed_increment = 0.1f;
+
+    float paddle_width = 12.0f;
+    float paddle_height = 100.0f;
+    float paddle_speed = 50.0f;
+    
+    float winning_score = 10;
+
+    private GLCanvas canvas;
+    private Animator animator;
+    private float player1_y = 0, player2_y = 0;
+    private float ball_x = 0, ball_y = 0;
+    private float ball_dx = 0.3f, ball_dy = 0.111115f, ball_speed = ball_initial_speed;
+    private boolean ball_started = false;
+    private int player1_score = 0, player2_score = 0;  
+    
+    public PongGame() {
+        super("Enhanced Pong Game");
+
+        canvas = new GLCanvas();
+        canvas.addGLEventListener(this);
+        canvas.addKeyListener(this);
+        canvas.requestFocusInWindow();
+
+        animator = new Animator(canvas);
+        animator.start();
+
+        add(canvas);
+        setSize(800, 600);
+        setVisible(true);
+        setLocation(200, 100);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+
+    @Override
+    public void init(GLAutoDrawable drawable) {
+        GL2 gl = drawable.getGL().getGL2();
+        GLU glu = new GLU();
+
+        // Enable anti-aliasing
+        gl.glEnable(GL2.GL_BLEND);  // Enable blending for smoother edges
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);  // Set the blending function
+        // Enable line and polygon smoothing for smoother edges
+        gl.glEnable(GL2.GL_LINE_SMOOTH); // Enable line smoothing
+        gl.glEnable(GL2.GL_POLYGON_SMOOTH); // Enable polygon smoothing
+
+        // Set the quality of the smoothing (higher values = smoother edges)
+        gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_NICEST); // Set line smoothing quality
+        gl.glHint(GL2.GL_POLYGON_SMOOTH_HINT, GL2.GL_NICEST); // Set polygon smoothing quality
+
+        // Set clear color (background color)
+        gl.glClearColor(0.0f, 0.0f, 0.1f, 0.0f);
+        
+        // Set up orthographic projection
+        glu.gluOrtho2D(-400, 400, -300, 300);
+    }
+
+    @Override
+    public void display(GLAutoDrawable drawable) {
+        GL2 gl = drawable.getGL().getGL2();
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
+
+        renderCenterLine(gl);
+
+        // Render top border (using polygon)
+        renderBorder(gl, -400, 310, 800, 20, 1.0f, 0.0f, 0.0f); // Red color for top border
+        renderScore(gl);
+
+        // Render bottom border (using polygon)
+        renderBorder(gl, -400, -310, 800, 20, 0.0f, 0.0f, 1.0f); // Blue color for bottom border
+
+        gl.glPushMatrix();
+        gl.glTranslatef(-380, player1_y, 0);
+        renderPaddle(gl, 0, 0, 1.0f, 0.0f, 0.0f);
+        gl.glPopMatrix();
+
+        gl.glPushMatrix();
+        gl.glTranslatef(360, player2_y, 0);
+        renderPaddle(gl, 0, 0, 0.0f, 0.0f, 1.0f);
+        gl.glPopMatrix();
+
+        renderBall(gl);
+        updateGame();
+    }
+
+    void renderPaddle(GL2 gl, float x, float y, float r, float g, float b) {
+        gl.glColor3f(r, g, b);
+        gl.glBegin(GL2.GL_POLYGON); // Use GL_POLYGON instead of GL_QUADS
+        gl.glVertex2f(x, y - paddle_height / 2); // Bottom-left corner
+        gl.glVertex2f(x + paddle_width, y - paddle_height / 2); // Bottom-right corner
+        gl.glVertex2f(x + paddle_width, y + paddle_height / 2); // Top-right corner
+        gl.glVertex2f(x, y + paddle_height / 2); // Top-left corner
+        gl.glEnd();
+    }
+
+    void renderBall(GL2 gl) {
+        gl.glColor3f(1.0f, 1.0f, 0f); // Yellow color for the ball
+        gl.glPointSize(ball_size); // Make the ball a small point
+        gl.glBegin(GL2.GL_POINTS);
+        gl.glVertex2f(ball_x, ball_y); // Draw the ball as a point
+        gl.glEnd();
+    }
+
+    void renderCenterLine(GL2 gl) {
+        gl.glEnable(GL2.GL_LINE_STIPPLE); // Enable line stipple
+        
+        gl.glLineStipple(2, (short) 0x00FF); // Set stipple pattern (dashed line)
+        gl.glColor3f(1.0f, 1.0f, 1.0f); // Match the ball's color (white)
+        gl.glLineWidth(10); // Adjust line width to match the ball's visual size
+
+        gl.glBegin(GL2.GL_LINES);
+        gl.glVertex2f(0, 300); // Top of the screen
+        gl.glVertex2f(0, -300); // Bottom of the screen
+        gl.glEnd();
+
+        gl.glDisable(GL2.GL_LINE_STIPPLE); // Disable line stipple
+    }
+
+    void renderBorder(GL2 gl, float x, float y, float width, float height, float r, float g, float b) {
+        gl.glColor3f(r, g, b); // Set border color
+
+        gl.glColor3f(0.5f, 0.5f, 0.5f); // Gray color
+        // Top border using polygon
+        gl.glBegin(GL2.GL_POLYGON);
+        gl.glVertex2f(x, y + height); // Top-left corner
+        gl.glVertex2f(x + width, y + height); // Top-right corner
+        gl.glVertex2f(x + width, y); // Bottom-right corner
+        gl.glVertex2f(x, y); // Bottom-left corner
+        gl.glEnd();
+
+        // Bottom border using polygon
+        gl.glBegin(GL2.GL_POLYGON);
+        gl.glVertex2f(x, y); // Bottom-left corner
+        gl.glVertex2f(x + width, y); // Bottom-right corner
+        gl.glVertex2f(x + width, y - height); // Bottom-right corner (below the bottom edge)
+        gl.glVertex2f(x, y - height); // Bottom-left corner (below the bottom edge)
+        gl.glEnd();
+    }
+
+    void renderScore(GL2 gl) {
+        GLUT glut = new GLUT();
+        String player1_score_text = String.format("%02d  ", player1_score); // Player 1 score as a string
+        String player2_score_text = String.format("%02d ", player2_score); // Player 2 score as a string
+        gl.glLineWidth(3); // Adjust line width to match the ball's visual size
+
+        gl.glPushMatrix();
+        gl.glTranslatef(-110, 240, 0); // Adjust the position if needed
+        gl.glScalef(0.4f, 0.4f, 1.0f); // Scale the text to make it larger or smaller
+
+        // Render Player 1 score in blue
+        gl.glColor3f(1.0f, 0.0f, 0.0f); // Set color to blue
+        for (int i = 0; i < player1_score_text.length(); i++) {
+            glut.glutStrokeCharacter(GLUT.STROKE_ROMAN, player1_score_text.charAt(i));
+        }
+
+        // Move to the right for Player 2 score
+        gl.glTranslatef(40, 0, 0); // Adjust the X offset to space out the scores
+
+        // Render Player 2 score in white
+        gl.glColor3f(0.0f, 0.0f, 1.0f); // Set color to white
+        for (int i = 0; i < player2_score_text.length(); i++) {
+            glut.glutStrokeCharacter(GLUT.STROKE_ROMAN, player2_score_text.charAt(i));
+        }
+
+        gl.glPopMatrix();
+    }
+
+    void updateGame() {
+        if (player1_score >= winning_score || player2_score >= winning_score) {
+            // Check if the game is over
+            ball_started = false; // Stop the ball when the game ends
+        }
+
+        if (ball_started) {
+            ball_x += ball_dx * ball_speed;
+            ball_y += ball_dy * ball_speed;
+        }
+
+        // Ball collision with top and bottom
+        if (ball_y >= 280 || ball_y <= -280) {
+            playPaddleSound();
+            ball_speed = Math.min(ball_speed + speed_increment, max_speed); // Increase speed
+            ball_dy = -ball_dy;
+        }
+
+        // Ball collision with player 1's paddle
+        if (ball_x - ball_size/2 <= -380 + paddle_width) { // Left paddle's X range
+            if (ball_y + ball_size/2  >= player1_y - paddle_height / 2 && ball_y - ball_size / 2 <= player1_y + paddle_height / 2) { 
+                // Ball's Y range intersects paddle's Y range
+                ball_dx = Math.abs(ball_dx); // Reflect the ball to the right
+                ball_speed = Math.min(ball_speed + speed_increment, max_speed); // Increase speed
+                playPaddleSound(); // Play sound effect
+            }
+        }
+
+        // Ball collision with player 2's paddle
+        if (ball_x + ball_size/2  >= 380 - paddle_width) { // Right paddle's X range
+            if (ball_y + ball_size/2  >= player2_y - paddle_height / 2 && ball_y - ball_size / 2 <= player2_y + paddle_height / 2) { 
+                // Ball's Y range intersects paddle's Y range
+                ball_dx = -Math.abs(ball_dx); // Reflect the ball to the left
+                ball_speed = Math.min(ball_speed + speed_increment, max_speed); // Increase speed
+                playPaddleSound(); // Play sound effect
+            }
+        }
+
+        // Ball out of bounds (left and right)
+        if (ball_x < -400) {
+            player2_score++;
+            playScoreSound(); // Play score sound
+            restartBallToPlayer(2); // Restart ball towards Player 2
+        }
+
+        if (ball_x > 400) {
+            player1_score++;
+            playScoreSound(); // Play score sound
+            restartBallToPlayer(1); // Restart ball towards Player 1
+        }
+    }
+
+    private void restartBallToPlayer(int player) {
+        ball_x = 0;
+        ball_y = 0;
+        ball_speed = ball_initial_speed;
+
+        if (player == 1) {
+            // Player 1 scored, ball goes to Player 2
+            ball_dx = -Math.abs(ball_dx); // Ball moves to the left
+            ball_dy = (Math.random() < 0.5) ? 0.2f : -0.2f;
+        } else if (player == 2) {
+            // Player 2 scored, ball goes to Player 1
+            ball_dx = Math.abs(ball_dx); // Ball moves to the right
+            ball_dy = (Math.random() < 0.5) ? 0.2f : -0.2f;
+        }
+    }
+
+    void playPaddleSound() {
+        try {
+            // Specify the correct path to the sound file
+            File soundFile = new File("C:\\Users\\DotNet\\Downloads\\269718__michorvath__ping-pong-ball-hit.wav"); // Update with actual file extension
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void playScoreSound() {
+        try {
+            File soundFile = new File("C:\\Users\\DotNet\\Downloads\\Score.wav"); // Update with actual file extension
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void restartBall() {
+        ball_x = 0;
+        ball_y = 0;
+        ball_dx = (Math.random() < 0.5) ? 0.3f : -0.3f;
+        ball_dy = (Math.random() < 0.5) ? 0.2f : -0.2f;
+        ball_speed = ball_initial_speed;
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_W) 
+            player1_y = Math.min(player1_y + paddle_speed, 290 - paddle_height / 2); // Limit the paddle movement
+        if (e.getKeyCode() == KeyEvent.VK_S) 
+            player1_y = Math.max(player1_y - paddle_speed, -290 + paddle_height / 2); // Limit the paddle movement
+        if (e.getKeyCode() == KeyEvent.VK_UP) 
+            player2_y = Math.min(player2_y + paddle_speed, 290 - paddle_height / 2); // Limit the paddle movement
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) 
+            player2_y = Math.max(player2_y - paddle_speed, -290 + paddle_height / 2); // Limit the paddle movement
+
+        // Only start the ball once with spacebar
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && !ball_started) {
+            ball_started = true; // Start the ball when space is pressed
+        }
+
+        // Reset the game if 'R' is pressed
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            player1_score = 0;
+            player2_score = 0;
+            restartBall();
+            ball_started = false;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {}
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    public static void main(String[] args) {
+        new PongGame();
+    }
+
+	@Override
+	public void dispose(GLAutoDrawable arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3,
+			int arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+}

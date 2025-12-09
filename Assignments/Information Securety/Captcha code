@@ -1,0 +1,33 @@
+from PIL import Image, ImageDraw, ImageFont
+import random
+import string
+
+def generate_simple_captcha(width=200, height=70, font_size=36):
+    # Step 1: Generate a random string
+    captcha_text = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
+    
+    # Step 2: Create a blank image
+    image = Image.new('RGB', (width, height), 'white')
+    draw = ImageDraw.Draw(image)
+
+    # Step 3: Select a font
+    try:
+        font = ImageFont.truetype("arial.ttf", font_size)
+    except IOError:
+        font = ImageFont.load_default()
+
+    # Step 4: Draw the text in the center of the image
+    text_box = draw.textbbox((0, 0), captcha_text, font=font) # (x1,y1,x2,y2)
+    text_width = text_box[2] - text_box[0] 
+    text_height = text_box[3] - text_box[1]
+    text_x = (width - text_width) / 2
+    text_y = (height - text_height) / 2
+    draw.text((text_x, text_y), captcha_text, font=font, fill='black')
+
+    # Step 5: Save or display the image
+    image.save('simple_captcha.png')
+    print(f"Captcha text: {captcha_text}")
+    image.show()
+
+# Generate the CAPTCHA
+generate_simple_captcha()

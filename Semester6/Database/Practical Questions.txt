@@ -1,0 +1,103 @@
+-- Final Exam
+
+-- Q1 
+SELECT UPPER(d.department_name), Max(e.salary)
+FROM hr.employees e
+JOIN hr.departments d 
+ON e.department_id = d.department_id 
+GROUP BY department_name
+HAVING Max(e.salary) > 10000;
+
+-- Q2
+SELECT UPPER(d.department_name), COUNT(e.employee_id), Round(SUM(e.salary), 2)
+FROM hr.employees e
+JOIN hr.departments d 
+ON e.department_id = d.department_id 
+GROUP BY department_name
+HAVING COUNT(e.employee_id) > 5;
+
+-- Q3
+SELECT d.department_name, AVG(e.salary)
+FROM hr.employees e
+JOIN hr.departments d 
+ON e.department_id = d.department_id 
+GROUP BY department_name
+HAVING AVG(e.salary) > (SELECT avg(salary) FROM hr.employees);
+
+-- Q4
+SELECT CONCAT(first_name, last_name) as "full name", hire_date
+FROM hr.employees 
+where (sysdate-hire_date)/365.25 > 5;
+
+
+-- Midterms
+
+-- Q1 - absent غير موجود
+
+-- Q2
+SELECT Max(hire_date), MIN(hire_date)
+FROM hr.employees;
+
+-- Q3
+SELECT COUNT(DISTINCT job_id)
+FROM hr.employees;
+
+-- Q4
+SELECT department_id, SUM(salary)
+FROM hr.employees 
+GROUP BY department_id
+HAVING SUM(salary) > 40000;
+
+-- Q5
+SELECT first_name, salary 
+FROM hr.employees 
+WHERE salary < ALL (SELECT e.salary 
+                    FROM hr.employees e 
+                    JOIN hr.departments d
+                    ON e.department_id = d.department_id 
+                    WHERE d.department_name = 'IT'
+                    );
+
+-- Q6
+SELECT department_id
+FROM hr.employees 
+GROUP BY department_id
+HAVING MAX(salary) < 8000;
+
+-- Q7
+SELECT e.first_name, d.department_name
+FROM hr.employees e
+JOIN hr.departments d
+ON e.department_id = d.department_id
+WHERE d.location_id = (SELECT location_id FROM departments WHERE department_name = 'Sales');
+
+-- Q8
+SELECT department_id, Max(salary)
+FROM hr.employees
+GROUP BY department_id
+HAVING Max(salary) < 9000;
+
+-- Q9
+SELECT department_id, AVG(salary), MAX(salary), COUNT(*)
+FROM hr.employees
+GROUP BY department_id
+HAVING COUNT(*) > 5;
+
+-- Q10 Absent غير موجود
+
+-- Q11
+SELECT d.department_name, MAX(e.salary)
+FROM hr.employees e
+JOIN hr.departments d
+ON e.department_id = d.department_id
+GROUP BY d.department_name
+HAVING MAX(e.salary) > 10000;
+
+--Q12
+SELECT d.department_name, COUNT(*)
+FROM hr.employees e
+RIGHT OUTER JOIN hr.departments d
+ON e.department_id = d.department_id
+GROUP BY d.department_name
+HAVING COUNT(*) > 5;
+

@@ -1,0 +1,7 @@
+settings button = BA45FF00
+ok Button = BF40FF00
+up Button = B946FF00
+down button = EA15FF00
+right button = BC43FF00
+left button = BB44FF00
+exit button = F807FF00

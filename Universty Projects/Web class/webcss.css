@@ -1,0 +1,56 @@
+/* .container {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "sidebar content content"
+    "footer footer footer";
+  grid-template-columns: 1fr 2fr 2fr;
+  grid-template-rows: 100px 200px 200px;
+  grid-gap: 10px;
+  height: 500;
+}
+.item {
+  background-color: #ddd;
+  border: 1px solid #999;
+  text-align: center;
+  line-height: 100px;
+}
+.item {
+  background-color: #ddd;
+  border: 1px solid #222;
+  text-align: center;
+  line-height: 100px;
+}
+.item1 {
+  grid-area: header;
+}
+.item2 {
+  grid-area: sidebar;
+}
+.item3 {
+  grid-area: content;
+}
+.item4 {
+  grid-area: footer;
+}
+.item5 {
+  grid-area: content;
+}
+.item6 {
+  grid-area: footer;
+} */
+
+/* example 2 */
+
+/* .Relative-parent {
+  position: relative;
+  height: 200px;
+  width: 200px;
+  background-color: lightblue;
+}
+.Relative-child {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  background-color: pink;
+} */

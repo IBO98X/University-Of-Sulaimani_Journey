@@ -1,0 +1,5 @@
+Welcome we are
+splitting this file using
+whitespace and
+comma,delimiter by
+using split method

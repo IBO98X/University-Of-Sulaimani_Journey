@@ -1,0 +1,67 @@
+create table departments (
+depart_id number(*,0) primary key,
+depart_name nvarchar2(100) constraint name_nn not null
+);
+
+alter table departments add city nvarchar2(50) default 'Baghdad'
+alter table departments modify depart_name nvarchar2(50)
+alter table departments drop constraint name_nn
+alter table departments add constraint name_u unique(depart_name)
+
+desc departments
+desc employees
+
+create table employees (
+emp_id number(*,0) primary key,
+name nvarchar2(50),
+age number(2,0),
+salary number(5,2),
+depart_id number(*,0),
+constraint id_fk foreign key(depart_id) references departments(depart_id),
+constraint age_check check (age >= 18 and age <= 60)
+);
+
+
+insert into departments values(1,'computer science','selmani')
+insert into departments values(2,'computer enigneer',null)
+insert into departments(depart_id, depart_name) values(3,'Architacture')
+
+insert into employees values(1,'Ibrahim Qahtan',21,100,1)
+insert into employees values(2,'Abdulazeez Qusay',23,200,2)
+insert into employees values(3,'Mustafa Musab',21,500,1)
+
+update employees set salary=300 where emp_id=1 
+
+delete from employees where age=21
+
+select * from departments 
+select * from employees
+select name,age from employees
+select name,age,salary,salary+200 from employees
+select name as firstName,age from employees
+select name "firstName",age from employees
+select name,age,salary,salary+200 "updated salary" from employees
+select name || age from employees
+select name  ' '  age from employees
+select name  ,' his/her age is: '  age from employees
+select depart_id from employees
+select distinct depart_id from employees
+SELECT * FROM tab
+select * from employees where salary >= 300
+select * from employees where salary <= 300 and salary > 100
+select * from employees where salary between 100 and 300
+select * from employees where salary not between 100 and 300
+select * from employees where salary <= 300 and salary > 100 and depart_id=2
+select * from employees where emp_id=1 or emp_id=2
+select * from employees where emp_id in (1,2)
+select * from employees where emp_id not in (1,2)
+select * from employees where name like 'Ib%'
+select * from employees where name like '_bd%'
+select * from employees where name like '%a%'
+select * from departments where city is null
+select * from departments where city is not null
+select * from employees order by emp_id
+select * from employees order by depart_id, salary
+select * from employees order by salary, depart_id
+SELECT name,salary FROM employees ORDER BY 2 DESC
+SELECT name,salary as sal FROM employees ORDER BY sal

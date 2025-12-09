@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Render All Elements Normally -->
+    <link rel="stylesheet" href="css/normalize.css" />
+    <!-- Font Awesome Library -->
+    <link rel="stylesheet" href="css/all.min.css" />
+    <!-- Css Framework -->
+    <link rel="stylesheet" href="css/framework.css" />
+    <!-- Main Css File -->
+    <link rel="stylesheet" href="css/main.css" />
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+      rel="stylesheet"
+    />
+    <title>Manage Cars</title>
+  </head>
+  <body>
+    <div class="page d-flex">
+      <aside class="bg-white p-10 p-relative">
+        <h2 class="p-relative txt-ali-c mt-0">Company</h2>
+        <ul>
+          <li>
+            <a
+              href="index.html"
+              class="active d-flex ali-it-c fs-14 fc-black rad-6 p-10"
+            >
+              <i class="fa-solid fa-chart-line fa-fw"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="cars.html"
+              class="d-flex ali-it-c fs-14 fc-black rad-6 p-10"
+            >
+              <i class="fa-solid fa-list-check fa-fw"></i>
+              <span>Cars</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="sold.html"
+              class="d-flex ali-it-c fs-14 fc-black rad-6 p-10"
+            >
+              <i class="fa-solid fa-list-check fa-fw"></i>
+              <span>Sold Cars</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="manage.html"
+              class="d-flex ali-it-c fs-14 fc-black rad-6 p-10"
+            >
+              <i class="fa-solid fa-person-chalkboard fa-fw"></i>
+              <span>Manage</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="settings.html"
+              class="d-flex ali-it-c fs-14 fc-black rad-6 p-10"
+            >
+              <i class="fa-solid fa-gears fa-fw"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+        <div class="logout">
+          <a href="login_page.html" class="btn-shape-red">Logout</a>
+        </div>
+      </aside>
+      <section class="w-full">
+        <h1 class="p-relative">Manage Cars</h1>
+        <section class="wrapper d-grid gap-20">
+          <!-- Start Manage -->
+          <div class="manage p-20 bg-white bor-rad-10">
+            <h2 class="mt-0 mb-10">Add Car</h2>
+            <form action="">
+              <div class="box">
+                <label for="car-name">Car Name</label>
+                <input type="text" name="car-name" />
+              </div>
+              <div class="box">
+                <label for="type">Type</label>
+                <input type="text" name="type" />
+              </div>
+              <div class="box">
+                <label for="chassis">Chassis</label>
+                <input type="text" name="chassis" />
+              </div>
+              <div class="box">
+                <label for="color">Color</label>
+                <input type="text" name="color" />
+              </div>
+              <div class="box">
+                <label for="state">State</label>
+                <input type="text" name="state" />
+              </div>
+              <div class="box">
+                <label for="metric">Metric</label>
+                <input type="number" name="metric" />
+              </div>
+              <div class="box">
+                <label for="purchase">Purchase Price</label>
+                <input type="number" name="purchase" />
+              </div>
+              <div class="box">
+                <label for="date">Date</label>
+                <input type="date" name="date" />
+              </div>
+              <div class="box">
+                <label for="location">Location</label>
+                <input type="text" name="location" />
+              </div>
+              <input type="submit" class="btn-shape-blue" value="Add" />
+            </form>
+          </div>
+          <div>
+            <div class="manage p-20 bg-white bor-rad-10">
+              <h2 class="mt-0 mb-10">Remove Car</h2>
+              <form action="">
+                <div class="box">
+                  <label for="chassis">Car Chassis</label>
+                  <input type="text" name="chassis" />
+                </div>
+                <input type="submit" class="btn-shape-red" value="Remove" />
+              </form>
+            </div>
+            <div class="manage p-20 mt-20 bg-white bor-rad-10">
+              <h2 class="mt-0 mb-10">Sold Car</h2>
+              <form action="">
+                <div class="box">
+                  <label for="chassis">Car Chassis</label>
+                  <input type="text" name="chassis" />
+                </div>
+                <input type="submit" class="btn-shape-red" value="Sold" />
+              </form>
+            </div>
+          </div>
+          <!-- End Manage -->
+        </section>
+      </section>
+    </div>
+  </body>
+</html>
